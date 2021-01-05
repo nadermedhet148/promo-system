@@ -1,0 +1,21 @@
+[
+    {
+      "model": "Users.AdministratorUser",
+      "pk": 1,
+      "fields": {
+        "name": "test admin",
+        "username": "admin",
+        "address" : "test address"
+      }
+    },
+    {
+        "model": "Users.NormalUser",
+        "pk": 1,
+        "fields": {
+          "name": "test normal user",
+          "username": "normal user",
+          "address" : "test address",
+          "mobileNumber" : "01234534589"
+        }
+      }
+  ]
