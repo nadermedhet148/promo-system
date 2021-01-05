@@ -36,9 +36,7 @@ class UsersService:
             }
         else :
             return {
-               "error" : {
-                    "message" : 'sorry this user isn\'t exists',
-               }  
+               "error" :  'sorry this user isn\'t exists'
             }
     def normal_user_login(self, username) :
             normal_user = self.normalUserRepository.get_one_by_user_name(username)
@@ -53,9 +51,7 @@ class UsersService:
                 }
             else:
                 return {
-                   "error" : {
-                        "message" : 'sorry this user isn\'t exists',
-                   }  
+                   "error" : 'sorry this user isn\'t exists'
                 }
 
 
