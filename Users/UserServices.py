@@ -6,9 +6,9 @@ from django.core.exceptions import ObjectDoesNotExist
 
 class UsersService:
 
-    def __init__(self,administratorUserModel,normalUserModel):
-        self.administratorUserModel = administratorUserModel
-        self.normalUserModel = normalUserModel
+    def __init__(self,administratorUserRepository,normalUserRepository):
+        self.normalUserRepository = normalUserRepository
+        self.administratorUserRepository = administratorUserRepository
 
 
     def generate_access_token(self,user_id ,user_type):
@@ -25,8 +25,8 @@ class UsersService:
 
     
     def administrator_user_login(self, username) :
-        try:
-            administrator_user = self.administratorUserModel.objects.get(username=username)
+        administrator_user = self.administratorUserRepository.get_one_by_user_name(username)
+        if administrator_user:
             return {
                 "data" : {
                     "token" : self.generate_access_token(administrator_user.id, 'administrator_user'),
@@ -34,15 +34,15 @@ class UsersService:
                     "id" : administrator_user.id,
                 }
             }
-        except ObjectDoesNotExist:
+        else :
             return {
                "error" : {
                     "message" : 'sorry this user isn\'t exists',
                }  
             }
     def normal_user_login(self, username) :
-            try:
-                normal_user = self.normalUserModel.objects.get(username=username)
+            normal_user = self.normalUserRepository.get_one_by_user_name(username)
+            if normal_user:
                 return {
                     "data" : {
                         "token" : self.generate_access_token(normal_user.id, 'normal_user'),
@@ -51,7 +51,7 @@ class UsersService:
                         "mobile_number" : normal_user.mobileNumber
                     }
                 }
-            except ObjectDoesNotExist:
+            else:
                 return {
                    "error" : {
                         "message" : 'sorry this user isn\'t exists',

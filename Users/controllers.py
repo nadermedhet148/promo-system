@@ -6,9 +6,11 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view, permission_classes
 from .UserServices import UsersService
-from .models import AdministratorUser , NormalUser
+from .Repositories.AdministratorUserRepository import AdministratorUserRepository
+from .Repositories.NormalUserRepository import NormalUserRepository
 
-usersService = UsersService(AdministratorUser , NormalUser)
+
+usersService = UsersService(AdministratorUserRepository() ,  NormalUserRepository())
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
