@@ -60,24 +60,47 @@ promoSchema = {
                                 }),
                             }
                          )
-@api_view(['POST'])
+@swagger_auto_schema(methods=['get'],
+                        operation_description="this is end point get allowed promos for logged in user" ,
+                        responses={
+                             200 : openapi.Schema(
+                                type=openapi.TYPE_OBJECT,
+                                properties=promoSchema,
+                             ),
+                             400 : openapi.Schema(
+                                type=openapi.TYPE_OBJECT,
+                                properties={
+                                    'error': openapi.Schema(type=openapi.TYPE_STRING )
+                                }),
+                            }
+                         )
+@api_view(['POST' , 'GET'])
 @permission_classes([IsAuthenticated])
-def create_promo(request):
-    response = promoService.create_promo(
-        promoType =     request.data.get('promoType') ,
-        startTime =     request.data.get('startTime') ,
-        endTime =       request.data.get('endTime') ,
-        promoAmount =   request.data.get('promoAmount') ,
-        isActive =      request.data.get('isActive') ,
-        description =   request.data.get('description') ,
-        normalUserId =  request.data.get('normalUserId')  , 
-        creatorType =   request.user.user_type 
-    )
-    if(response.get('error')):
-        return Response(response , status=400)
+def mange_promo(request):
+    if request.method == "POST":
+        response = promoService.create_promo(
+            promoType =     request.data.get('promoType') ,
+            startTime =     request.data.get('startTime') ,
+            endTime =       request.data.get('endTime') ,
+            promoAmount =   request.data.get('promoAmount') ,
+            isActive =      request.data.get('isActive') ,
+            description =   request.data.get('description') ,
+            normalUserId =  request.data.get('normalUserId')  , 
+            creatorType =   request.user.user_type 
+        )
+        if(response.get('error')):
+            return Response(response , status=400)
 
-    return Response(PromoSerializer(instance=response.get('data')).data , status=200)
+        return Response(PromoSerializer(instance=response.get('data')).data , status=200)
+    if request.method == 'GET' :
+        userType = request.user.user_type
+        if userType == 'administrator_user':
+            response = promoService.get_promos()
 
+        if(response.get('error')):
+            return Response(response , status=400)
+        promos = PromoSerializer(response.get('data') , many = True)
+        return Response(promos.data , status=200)
 
 @swagger_auto_schema(methods=['PUT'],
                         operation_description="this is end point for edit promo" ,
@@ -107,7 +130,6 @@ def create_promo(request):
 @api_view(['Put'])
 @permission_classes([IsAuthenticated])
 def modify_promo(request,pk):
-    print(request)
     response = promoService.modify_promo(
         startTime =     request.data.get('startTime') ,
         endTime =       request.data.get('endTime') ,
@@ -121,3 +143,8 @@ def modify_promo(request,pk):
         return Response(response , status=400)
 
     return Response(PromoSerializer(instance=response.get('data')).data , status=200)
+
+
+
+
+

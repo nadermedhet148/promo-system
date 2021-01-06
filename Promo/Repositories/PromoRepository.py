@@ -19,9 +19,17 @@ class PromoRepository :
             return promo
         except ObjectDoesNotExist:
              return False
+
     def update(self,promo):
         try:
             promo.save()
             return promo
+        except ObjectDoesNotExist:
+             return False
+
+    def listing(self):
+        try:
+            promos = Promo.objects.all()
+            return promos
         except ObjectDoesNotExist:
              return False
