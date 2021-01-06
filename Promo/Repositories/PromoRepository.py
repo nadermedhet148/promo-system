@@ -27,9 +27,12 @@ class PromoRepository :
         except ObjectDoesNotExist:
              return False
 
-    def listing(self):
+    def listing(self,normalUserId=None):
         try:
-            promos = Promo.objects.all()
+            if not id:
+                promos = Promo.objects.all()
+            if id :
+                promos = Promo.objects.filter(normalUser=normalUserId)
             return promos
         except ObjectDoesNotExist:
              return False

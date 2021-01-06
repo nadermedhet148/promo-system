@@ -77,11 +77,11 @@ class PromoService:
             "data" : updatedPromo
         }
 
-    def get_promos(self):
-        promos = self.promoRepository.listing()
+    def get_promos(self,normalUserId=None):
+        promos = self.promoRepository.listing(normalUserId)
         if not promos : 
             return {
-                "error" : "sorry internal error happen while edit promotion"
+                "error" : "sorry internal error happen while get promotion"
             }        
         return {
             "data" : promos

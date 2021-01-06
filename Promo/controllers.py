@@ -97,6 +97,8 @@ def mange_promo(request):
         if userType == 'administrator_user':
             response = promoService.get_promos()
 
+        if userType == 'normal_user':
+            response = promoService.get_promos(request.user.user_id)
         if(response.get('error')):
             return Response(response , status=400)
         promos = PromoSerializer(response.get('data') , many = True)
