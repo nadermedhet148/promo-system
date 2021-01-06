@@ -12,7 +12,6 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 login_params = openapi.Parameter('user_name', openapi.IN_BODY, description="the User user name", type=openapi.TYPE_STRING)
-# user_response = openapi.Response('response description', UserSerializer)
 
 
 usersService = UsersService(AdministratorUserRepository() ,  NormalUserRepository())
