@@ -77,6 +77,26 @@ class PromoService:
             "data" : updatedPromo
         }
 
+    def delete_promo(self,promoId,editorType=''):
+        if editorType != 'administrator_user' :
+                return {
+                "error" : "sorry you must be administrator_user to create promotion"
+        }
+        promo = self.promoRepository.get_one_by_id(promoId)        
+        if not promo : 
+            return {
+                "error" : "sorry this promo user isn\'t existed"
+            }
+
+        deletePromo = self.promoRepository.delete(promo)
+        if not deletePromo : 
+            return {
+                "error" : "sorry internal error happen while delete promotion"
+            }        
+        return {
+            "data" : deletePromo
+        }
+
     def get_promos(self,normalUserId=None):
         promos = self.promoRepository.listing(normalUserId)
         if not promos : 

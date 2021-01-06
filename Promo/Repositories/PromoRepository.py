@@ -20,19 +20,25 @@ class PromoRepository :
         except ObjectDoesNotExist:
              return False
 
+    def delete(self,promo):
+        try:
+            promo.delete()
+            return promo
+        except Exception:
+             return False
     def update(self,promo):
         try:
             promo.save()
             return promo
-        except ObjectDoesNotExist:
+        except Exception:
              return False
 
     def listing(self,normalUserId=None):
         try:
-            if not id:
+            if not normalUserId:
                 promos = Promo.objects.all()
-            if id :
+            if normalUserId :
                 promos = Promo.objects.filter(normalUser=normalUserId)
             return promos
-        except ObjectDoesNotExist:
+        except Exception:
              return False

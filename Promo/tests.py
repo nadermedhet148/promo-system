@@ -134,3 +134,37 @@ class UserServiceTest(TestCase):
         
         result = promoService.modify_promo(promoAmount=1,description='',startTime="2021-01-12",endTime="2021-10-12",isActive=True,promoId=1,editorType="administrator_user")
         self.assertEqual(result.get('data').promoAmount , 1)
+
+    @mock.patch('Promo.Repositories.PromoRepository')
+    @mock.patch('Users.Repositories.NormalUserRepository')
+    def test_delete_promo_return_error_when_promo_not_existed(self, promoRepository,normalUserRepository):
+    
+        promoService = PromoService(promoRepository,normalUserRepository)
+
+        promoRepository.get_one_by_id.return_value =   None
+
+        result = promoService.delete_promo(promoId=1,editorType="administrator_user")
+        self.assertEqual(result.get('error') , 'sorry this promo user isn\'t existed')
+
+    @mock.patch('Promo.Repositories.PromoRepository')
+    @mock.patch('Users.Repositories.NormalUserRepository')
+    def test_delete_promo_editorType_should_be_admin(self, promoRepository,normalUserRepository):
+    
+        promoService = PromoService(promoRepository,normalUserRepository)
+
+        promoRepository.get_one_by_id.return_value =   None
+        
+        result = promoService.delete_promo(promoId=1,editorType="test")
+        self.assertEqual(result.get('error') , 'sorry you must be administrator_user to create promotion')
+
+    @mock.patch('Promo.Repositories.PromoRepository')
+    @mock.patch('Users.Repositories.NormalUserRepository')
+    def test_delete_promo_return_deleted_promo(self, promoRepository,normalUserRepository):
+    
+        promoService = PromoService(promoRepository,normalUserRepository)
+
+        promoRepository.get_one_by_id.return_value =  Promo(promoAmount=1,description='',promoType='test',startTime="2022-01-12",endTime="2021-10-12",isActive=True,promoCode=5093,creationTime="2021-11-11")
+        promoRepository.delete.return_value =  Promo(promoAmount=1,description='',promoType='test',startTime="2022-01-12",endTime="2021-10-12",isActive=True,promoCode=5093,creationTime="2021-11-11")
+        
+        result = promoService.delete_promo(promoId=1,editorType="administrator_user")
+        self.assertEqual(result.get('data').promoAmount , 1)

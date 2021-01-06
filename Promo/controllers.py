@@ -96,6 +96,7 @@ def mange_promo(request):
         userType = request.user.user_type
         if userType == 'administrator_user':
             response = promoService.get_promos()
+            
 
         if userType == 'normal_user':
             response = promoService.get_promos(request.user.user_id)
@@ -129,23 +130,48 @@ def mange_promo(request):
                                 }),
                             }
                          )
-@api_view(['Put'])
+@swagger_auto_schema(methods=['DELETE'],
+                        operation_description="this is end point for delete promo" ,
+
+                        responses={
+                             200 : openapi.Schema(
+                                type=openapi.TYPE_OBJECT,
+                                properties=promoSchema,
+                             ),
+                             400 : openapi.Schema(
+                                type=openapi.TYPE_OBJECT,
+                                properties={
+                                    'error': openapi.Schema(type=openapi.TYPE_STRING )
+                                }),
+                            }
+                         )
+@api_view(['PUT','DELETE'])
 @permission_classes([IsAuthenticated])
 def modify_promo(request,pk):
-    response = promoService.modify_promo(
-        startTime =     request.data.get('startTime') ,
-        endTime =       request.data.get('endTime') ,
-        promoAmount =   request.data.get('promoAmount') ,
-        description =   request.data.get('description') ,
-        isActive =      request.data.get('isActive') ,
-        editorType=   request.user.user_type ,
-        promoId =       pk,
-    )
-    if(response.get('error')):
-        return Response(response , status=400)
+    if request.method == 'PUT' :
+        response = promoService.modify_promo(
+            startTime =     request.data.get('startTime') ,
+            endTime =       request.data.get('endTime') ,
+            promoAmount =   request.data.get('promoAmount') ,
+            description =   request.data.get('description') ,
+            isActive =      request.data.get('isActive') ,
+            editorType=   request.user.user_type ,
+            promoId =       pk,
+        )
+        if(response.get('error')):
+            return Response(response , status=400)
 
-    return Response(PromoSerializer(instance=response.get('data')).data , status=200)
+        return Response(PromoSerializer(instance=response.get('data')).data , status=200)
+    if request.method == 'DELETE' :
+        response = promoService.delete_promo(
+            editorType=   request.user.user_type ,
+            promoId =       pk,
+        )
+        if(response.get('error')):
+            return Response(response , status=400)
 
+        return Response(PromoSerializer(instance=response.get('data')).data , status=200)
+    
 
 
 
