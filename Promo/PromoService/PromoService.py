@@ -43,3 +43,38 @@ class PromoService:
         return {
             "data" : newPromo
         }
+
+    def modify_promo(self,promoId,promoAmount,startTime,endTime,isActive,description,editorType=''):
+        if editorType != 'administrator_user' :
+                return {
+                "error" : "sorry you must be administrator_user to create promotion"
+        }
+        promo = self.promoRepository.get_one_by_id(promoId)        
+        if not promo : 
+            return {
+                "error" : "sorry this promo user isn\'t existed"
+            }
+                
+        if promoAmount < 0 :
+            return {
+                    "error" : "sorry promoAmount should be bigger than 0"
+                }  
+        if startTime > endTime : 
+            return {
+                "error" : "sorry startTime should be less than endTime"
+            } 
+        promo.promoAmount = promoAmount
+        promo.startTime = startTime
+        promo.endTime = endTime
+        promo.isActive = isActive
+        promo.description = description
+        updatedPromo = self.promoRepository.update(promo)
+        if not updatedPromo : 
+            return {
+                "error" : "sorry internal error happen while edit promotion"
+            }        
+        return {
+            "data" : updatedPromo
+        }
+
+        

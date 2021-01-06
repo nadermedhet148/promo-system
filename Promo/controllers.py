@@ -77,3 +77,47 @@ def create_promo(request):
         return Response(response , status=400)
 
     return Response(PromoSerializer(instance=response.get('data')).data , status=200)
+
+
+@swagger_auto_schema(methods=['PUT'],
+                        operation_description="this is end point for edit promo" ,
+                        request_body=openapi.Schema(
+                             type=openapi.TYPE_OBJECT,
+                             required=[ 'start_time','end_time','promo_amount'],
+                             properties={
+                                    'startTime' :openapi.Schema(type=openapi.TYPE_STRING), 
+                                    'endTime' :openapi.Schema(type=openapi.TYPE_STRING), 
+                                    'promoAmount' :openapi.Schema(type=openapi.TYPE_NUMBER), 
+                                    'isActive' :openapi.Schema(type=openapi.TYPE_BOOLEAN), 
+                                    'description' :openapi.Schema(type=openapi.TYPE_STRING), 
+                             }
+                         ),
+                        responses={
+                             200 : openapi.Schema(
+                                type=openapi.TYPE_OBJECT,
+                                properties=promoSchema,
+                             ),
+                             400 : openapi.Schema(
+                                type=openapi.TYPE_OBJECT,
+                                properties={
+                                    'error': openapi.Schema(type=openapi.TYPE_STRING )
+                                }),
+                            }
+                         )
+@api_view(['Put'])
+@permission_classes([IsAuthenticated])
+def modify_promo(request,pk):
+    print(request)
+    response = promoService.modify_promo(
+        startTime =     request.data.get('startTime') ,
+        endTime =       request.data.get('endTime') ,
+        promoAmount =   request.data.get('promoAmount') ,
+        description =   request.data.get('description') ,
+        isActive =      request.data.get('isActive') ,
+        editorType=   request.user.user_type ,
+        promoId =       pk,
+    )
+    if(response.get('error')):
+        return Response(response , status=400)
+
+    return Response(PromoSerializer(instance=response.get('data')).data , status=200)
