@@ -16,7 +16,7 @@ class UsersService:
         access_token_payload = {
             'user_id': user_id,
             'user_type' : user_type,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, minutes=5),
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1, minutes=5),
             'iat': datetime.datetime.utcnow(),
         }
         access_token = jwt.encode(access_token_payload,
@@ -30,7 +30,7 @@ class UsersService:
             return {
                 "data" : {
                     "token" : self.generate_access_token(administrator_user.id, 'administrator_user'),
-                    "username" : administrator_user.username,
+                    "userName" : administrator_user.username,
                     "id" : administrator_user.id,
                 }
             }
@@ -44,9 +44,9 @@ class UsersService:
                 return {
                     "data" : {
                         "token" : self.generate_access_token(normal_user.id, 'normal_user'),
-                        "username" : normal_user.username,
+                        "userName" : normal_user.username,
                         "id" : normal_user.id,
-                        "mobile_number" : normal_user.mobileNumber
+                        "mobileNumber" : normal_user.mobileNumber
                     }
                 }
             else:

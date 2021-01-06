@@ -17,7 +17,7 @@ class UserServiceTest(TestCase):
         administratorUserRepository.get_one_by_user_name.return_value = False
         
         result = usersService.administrator_user_login('test')
-        self.assertEqual(result.get('error').get('message') , 'sorry this user isn\'t exists')
+        self.assertEqual(result.get('error') , 'sorry this user isn\'t exists')
 
     @mock.patch('Users.Repositories.AdministratorUserRepository')
     @mock.patch('Users.Repositories.NormalUserRepository')
@@ -29,7 +29,7 @@ class UserServiceTest(TestCase):
         
         result = usersService.administrator_user_login('test')
         
-        self.assertEqual(result.get('data').get('username') , 'test')
+        self.assertEqual(result.get('data').get('userName') , 'test')
         self.assertEqual(result.get('data').get('id') , 1)
 
 
@@ -43,7 +43,7 @@ class UserServiceTest(TestCase):
         normalUserRepository.get_one_by_user_name.return_value = False
         
         result = usersService.normal_user_login('test')
-        self.assertEqual(result.get('error').get('message') , 'sorry this user isn\'t exists')
+        self.assertEqual(result.get('error') , 'sorry this user isn\'t exists')
 
     @mock.patch('Users.Repositories.AdministratorUserRepository')
     @mock.patch('Users.Repositories.NormalUserRepository')
@@ -55,6 +55,6 @@ class UserServiceTest(TestCase):
         
         result = usersService.normal_user_login('test')
         
-        self.assertEqual(result.get('data').get('username') , 'test')
+        self.assertEqual(result.get('data').get('userName') , 'test')
         self.assertEqual(result.get('data').get('id') , 1)
 

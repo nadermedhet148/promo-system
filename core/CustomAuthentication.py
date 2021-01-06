@@ -5,6 +5,12 @@ from rest_framework import exceptions
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
+class AuthUser : 
+    def __init__(self , userId , userType , isAuthenticated):
+        self.user_id = userId
+        self.user_type = userType
+        self.is_authenticated = isAuthenticated 
+
 
 class SafeJWTAuthentication(BaseAuthentication):
     def authenticate(self, request):
@@ -22,8 +28,8 @@ class SafeJWTAuthentication(BaseAuthentication):
         except IndexError:
             raise exceptions.AuthenticationFailed('Token prefix missing')
 
-
-
-        return (user_data, None)
+        user = AuthUser(user_data.get('user_id') , user_data.get('user_type'),True)
+        
+        return (user, None)
 
 

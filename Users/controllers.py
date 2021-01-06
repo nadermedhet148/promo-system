@@ -11,7 +11,6 @@ from .Repositories.NormalUserRepository import NormalUserRepository
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-login_params = openapi.Parameter('user_name', openapi.IN_BODY, description="the User user name", type=openapi.TYPE_STRING)
 
 
 usersService = UsersService(AdministratorUserRepository() ,  NormalUserRepository())
@@ -20,16 +19,16 @@ usersService = UsersService(AdministratorUserRepository() ,  NormalUserRepositor
                         operation_description="this is end point for administrator user login" ,
                         request_body=openapi.Schema(
                              type=openapi.TYPE_OBJECT,
-                             required=['user_name'],
+                             required=['userName'],
                              properties={
-                                 'user_name': openapi.Schema(type=openapi.TYPE_STRING)
+                                 'userName': openapi.Schema(type=openapi.TYPE_STRING)
                              },
                          ),
                         responses={
                              200 : openapi.Schema(
                                 type=openapi.TYPE_OBJECT,
                                 properties={
-                                    'user_name': openapi.Schema(type=openapi.TYPE_STRING),
+                                    'userName': openapi.Schema(type=openapi.TYPE_STRING),
                                     'token': openapi.Schema(type=openapi.TYPE_STRING),
                                     'id' : openapi.Schema(type=openapi.TYPE_INTEGER)
                                 },
@@ -44,7 +43,7 @@ usersService = UsersService(AdministratorUserRepository() ,  NormalUserRepositor
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def administrator_user_login(request):
-    response = usersService.administrator_user_login(request.data.get("user_name"))
+    response = usersService.administrator_user_login(request.data.get("userName"))
 
     if(response.get('error')):
         return Response(response , status=400)
@@ -56,19 +55,19 @@ def administrator_user_login(request):
                         operation_description="this is end point for administrator user login" ,
                         request_body=openapi.Schema(
                              type=openapi.TYPE_OBJECT,
-                             required=['user_name'],
+                             required=['userName'],
                              properties={
-                                 'user_name': openapi.Schema(type=openapi.TYPE_STRING)
+                                 'userName': openapi.Schema(type=openapi.TYPE_STRING)
                              },
                          ),
                         responses={
                              200 : openapi.Schema(
                                 type=openapi.TYPE_OBJECT,
                                 properties={
-                                    'user_name': openapi.Schema(type=openapi.TYPE_STRING),
+                                    'userName': openapi.Schema(type=openapi.TYPE_STRING),
                                     'token': openapi.Schema(type=openapi.TYPE_STRING),
                                     'id' : openapi.Schema(type=openapi.TYPE_INTEGER),
-                                    "mobile_number" : openapi.Schema(type=openapi.TYPE_STRING),
+                                    "mobileNumber" : openapi.Schema(type=openapi.TYPE_STRING),
                                 },
                              ),
                              400 : openapi.Schema(
@@ -81,7 +80,7 @@ def administrator_user_login(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def normal_user_login(request):
-    response = usersService.normal_user_login(request.data.get("user_name"))
+    response = usersService.normal_user_login(request.data.get("userName"))
 
     if(response.get('error')):
         return Response(response , status=400)
