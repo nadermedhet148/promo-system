@@ -101,9 +101,56 @@ class PromoService:
         promos = self.promoRepository.listing(normalUserId)
         if not promos : 
             return {
-                "error" : "sorry internal error happen while get promotion"
+                "error" : "sorry internal error happen while get promotions"
             }        
         return {
             "data" : promos
         }      
-        
+
+
+    def get_promo(self,promoId):
+        promo = self.promoRepository.get_one_by_id(promoId)
+        if not promo : 
+            return {
+                "error" : "sorry internal error happen while get promotion"
+            }        
+        return {
+            "data" : promo
+        }   
+   
+    def update_promo_amount(self,promoId,deductedPromoAmount,editorType,userId):
+        if editorType != 'normal_user' :
+                return {
+                "error" : "sorry you must be normal_user to create promotion"
+        }
+        if deductedPromoAmount < 0 :
+            return {
+                    "error" : "sorry deductedPromoAmount should be bigger than 0"
+                }  
+        promo = self.promoRepository.get_one_by_id(promoId)     
+
+        if not promo : 
+            return {
+                "error" : "sorry this promo  isn\'t existed"
+            }
+
+        if promo.normalUser.id != userId : 
+            return {
+                "error" : "sorry this promo is not related to you"
+            }
+        if(promo.promoAmount - deductedPromoAmount < 0 ) :
+            return {
+                "error" : "sorry this promo quantity less than the deducted quantity"
+            }
+            
+        promo.promoAmount = promo.promoAmount - deductedPromoAmount   
+
+        updatedPromo = self.promoRepository.update(promo)
+        print(updatedPromo)
+        if not updatedPromo : 
+            return {
+                "error" : "sorry internal error happen while edit promotion"
+            }        
+        return {
+            "data" : updatedPromo
+        }

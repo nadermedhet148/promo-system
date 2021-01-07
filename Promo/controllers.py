@@ -38,7 +38,6 @@ promoSchema = {
                         operation_description="this is end point for administrator user login" ,
                         request_body=openapi.Schema(
                              type=openapi.TYPE_OBJECT,
-                             required=[ 'promo_type','start_time','end_time','promo_amount','description','normal_user_id'],
                              properties={
                                     'promoType' :openapi.Schema(type=openapi.TYPE_STRING), 
                                     'startTime' :openapi.Schema(type=openapi.TYPE_STRING), 
@@ -105,19 +104,10 @@ def mange_promo(request):
         promos = PromoSerializer(response.get('data') , many = True)
         return Response(promos.data , status=200)
 
-@swagger_auto_schema(methods=['PUT'],
-                        operation_description="this is end point for edit promo" ,
-                        request_body=openapi.Schema(
-                             type=openapi.TYPE_OBJECT,
-                             required=[ 'start_time','end_time','promo_amount'],
-                             properties={
-                                    'startTime' :openapi.Schema(type=openapi.TYPE_STRING), 
-                                    'endTime' :openapi.Schema(type=openapi.TYPE_STRING), 
-                                    'promoAmount' :openapi.Schema(type=openapi.TYPE_NUMBER), 
-                                    'isActive' :openapi.Schema(type=openapi.TYPE_BOOLEAN), 
-                                    'description' :openapi.Schema(type=openapi.TYPE_STRING), 
-                             }
-                         ),
+
+@swagger_auto_schema(methods=['DELETE'],
+                        operation_description="this is end point for delete promo" ,
+
                         responses={
                              200 : openapi.Schema(
                                 type=openapi.TYPE_OBJECT,
@@ -130,9 +120,18 @@ def mange_promo(request):
                                 }),
                             }
                          )
-@swagger_auto_schema(methods=['DELETE'],
-                        operation_description="this is end point for delete promo" ,
-
+@swagger_auto_schema(methods=['PUT'],
+                        operation_description="this is end point for edit promo" ,
+                        request_body=openapi.Schema(
+                             type=openapi.TYPE_OBJECT,
+                             properties={
+                                    'startTime' :openapi.Schema(type=openapi.TYPE_STRING), 
+                                    'endTime' :openapi.Schema(type=openapi.TYPE_STRING), 
+                                    'promoAmount' :openapi.Schema(type=openapi.TYPE_NUMBER), 
+                                    'isActive' :openapi.Schema(type=openapi.TYPE_BOOLEAN), 
+                                    'description' :openapi.Schema(type=openapi.TYPE_STRING), 
+                             }
+                         ),
                         responses={
                              200 : openapi.Schema(
                                 type=openapi.TYPE_OBJECT,
@@ -171,6 +170,65 @@ def modify_promo(request,pk):
             return Response(response , status=400)
 
         return Response(PromoSerializer(instance=response.get('data')).data , status=200)
+
+@swagger_auto_schema(methods=['PUT'],
+                        operation_description="this is end point allow normal user to use promo quantity" ,
+                        request_body=openapi.Schema(
+                             type=openapi.TYPE_OBJECT,
+                             properties={
+                                    'deductedPromoAmount' :openapi.Schema(type=openapi.TYPE_NUMBER), 
+                             }
+                         ),
+                        responses={
+                             200 : openapi.Schema(
+                                type=openapi.TYPE_OBJECT,
+                                properties=promoSchema,
+                             ),
+                             400 : openapi.Schema(
+                                type=openapi.TYPE_OBJECT,
+                                properties={
+                                    'error': openapi.Schema(type=openapi.TYPE_STRING )
+                                }),
+                            }
+                         )
+@swagger_auto_schema(methods=['GET'],
+                        operation_description="this is end point for get promo  for the normal user" ,
+                        responses={
+                             200 : openapi.Schema(
+                                type=openapi.TYPE_OBJECT,
+                                properties=promoSchema,
+                             ),
+                             400 : openapi.Schema(
+                                type=openapi.TYPE_OBJECT,
+                                properties={
+                                    'error': openapi.Schema(type=openapi.TYPE_STRING )
+                                }),
+                            }
+                         )
+@api_view(['PUT','GET'])
+@permission_classes([IsAuthenticated])
+def mange_user_promo(request,pk):
+    if request.method == 'GET' :
+        response = promoService.get_promo(
+            promoId =       pk,
+        )
+        if(response.get('error')):
+            return Response(response , status=400)
+
+        return Response(PromoSerializer(instance=response.get('data')).data  , status=200)
+    if request.method == 'PUT' :
+        response = promoService.update_promo_amount(
+            editorType=   request.user.user_type ,
+            promoId =       pk,
+            promoAmount = request.data.get('deductedPromoAmount'),
+            userId =        request.user.user_id
+        )
+        if(response.get('error')):
+            return Response(response , status=400)
+
+        return Response(PromoSerializer(instance=response.get('data')).data , status=200)
+
+
     
 
 

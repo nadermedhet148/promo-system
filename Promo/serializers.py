@@ -4,7 +4,7 @@ class PromoSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     promoType = serializers.CharField(max_length=200)
     promoCode = serializers.IntegerField()
-    creationTime  = serializers.DateField()
+    creationTime  = serializers.CharField()
     startTime = serializers.CharField()
     endTime = serializers.CharField()
     promoAmount = serializers.IntegerField()

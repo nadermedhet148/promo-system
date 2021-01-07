@@ -168,3 +168,70 @@ class UserServiceTest(TestCase):
         
         result = promoService.delete_promo(promoId=1,editorType="administrator_user")
         self.assertEqual(result.get('data').promoAmount , 1)
+
+    @mock.patch('Promo.Repositories.PromoRepository')
+    @mock.patch('Users.Repositories.NormalUserRepository')
+    def test_update_promo_amount_return_error_when_user_not_normal_user(self, promoRepository,normalUserRepository):
+    
+        promoService = PromoService(promoRepository,normalUserRepository)
+
+        promoRepository.get_one_by_id.return_value =  Promo(promoAmount=1,description='',promoType='test',startTime="2022-01-12",endTime="2021-10-12",isActive=True,promoCode=5093,creationTime="2021-11-11")
+        
+        result = promoService.update_promo_amount(promoId=1,editorType="administrator_user",deductedPromoAmount=10,userId=1)
+        self.assertEqual(result.get('error') , 'sorry you must be normal_user to create promotion')
+
+    @mock.patch('Promo.Repositories.PromoRepository')
+    @mock.patch('Users.Repositories.NormalUserRepository')
+    def test_update_promo_amount_return_error_when_deductedPromoAmount_less_than_0(self, promoRepository,normalUserRepository):
+    
+        promoService = PromoService(promoRepository,normalUserRepository)
+
+        promoRepository.get_one_by_id.return_value =  Promo(promoAmount=1,description='',promoType='test',startTime="2022-01-12",endTime="2021-10-12",isActive=True,promoCode=5093,creationTime="2021-11-11")
+        
+        result = promoService.update_promo_amount(promoId=1,editorType="normal_user",deductedPromoAmount=-1,userId=1)
+        self.assertEqual(result.get('error') , 'sorry deductedPromoAmount should be bigger than 0')
+
+    @mock.patch('Promo.Repositories.PromoRepository')
+    @mock.patch('Users.Repositories.NormalUserRepository')
+    def test_update_promo_amount_return_error_when_promo_not_existed(self, promoRepository,normalUserRepository):
+    
+        promoService = PromoService(promoRepository,normalUserRepository)
+
+        promoRepository.get_one_by_id.return_value = False
+        
+        result = promoService.update_promo_amount(promoId=1,editorType="normal_user",deductedPromoAmount=1,userId=1)
+        self.assertEqual(result.get('error') , 'sorry this promo  isn\'t existed')
+
+    @mock.patch('Promo.Repositories.PromoRepository')
+    @mock.patch('Users.Repositories.NormalUserRepository')
+    def test_update_promo_amount_return_error_when_promo_not_realted_to_user(self, promoRepository,normalUserRepository):
+    
+        promoService = PromoService(promoRepository,normalUserRepository)
+
+        promoRepository.get_one_by_id.return_value =  Promo(promoAmount=1,description='',promoType='test',startTime="2022-01-12",endTime="2021-10-12",isActive=True,promoCode=5093,creationTime="2021-11-11",normalUser=NormalUser(username='test',address="test",mobileNumber='1',pk=2))
+        
+        result = promoService.update_promo_amount(promoId=1,editorType="normal_user",deductedPromoAmount=1,userId=1)
+        self.assertEqual(result.get('error') , 'sorry this promo is not related to you')
+
+    @mock.patch('Promo.Repositories.PromoRepository')
+    @mock.patch('Users.Repositories.NormalUserRepository')
+    def test_update_promo_amount_return_error_promo_quantity_less_than_the_deducted_quantity(self, promoRepository,normalUserRepository):
+    
+        promoService = PromoService(promoRepository,normalUserRepository)
+
+        promoRepository.get_one_by_id.return_value =  Promo(promoAmount=1,description='',promoType='test',startTime="2022-01-12",endTime="2021-10-12",isActive=True,promoCode=5093,creationTime="2021-11-11",normalUser=NormalUser(username='test',address="test",mobileNumber='1',pk=1))
+        
+        result = promoService.update_promo_amount(promoId=1,editorType="normal_user",deductedPromoAmount=10000,userId=1)
+        self.assertEqual(result.get('error') , 'sorry this promo quantity less than the deducted quantity')
+
+    @mock.patch('Promo.Repositories.PromoRepository')
+    @mock.patch('Users.Repositories.NormalUserRepository')
+    def test_update_promo_amount_update_promo(self, promoRepository,normalUserRepository):
+    
+        promoService = PromoService(promoRepository,normalUserRepository)
+
+        promoRepository.get_one_by_id.return_value =  Promo(promoAmount=10,description='',promoType='test',startTime="2022-01-12",endTime="2021-10-12",isActive=True,promoCode=5093,creationTime="2021-11-11",normalUser=NormalUser(username='test',address="test",mobileNumber='1',pk=1))
+        promoRepository.update.return_value =  Promo(promoAmount=9,description='',promoType='test',startTime="2022-01-12",endTime="2021-10-12",isActive=True,promoCode=5093,creationTime="2021-11-11",normalUser=NormalUser(username='test',address="test",mobileNumber='1',pk=1))
+        
+        result = promoService.update_promo_amount(promoId=1,editorType="normal_user",deductedPromoAmount=1,userId=1)
+        self.assertEqual(result.get('data').promoAmount , 9)
