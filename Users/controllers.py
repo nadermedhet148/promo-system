@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view, permission_classes
-from .UserServices import UsersService
+from .Services.UserServices import UsersService
 from .Repositories.AdministratorUserRepository import AdministratorUserRepository
 from .Repositories.NormalUserRepository import NormalUserRepository
 from drf_yasg.utils import swagger_auto_schema

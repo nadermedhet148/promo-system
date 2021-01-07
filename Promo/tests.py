@@ -1,6 +1,6 @@
 from django.test import TestCase
 import mock
-from Promo.PromoService.PromoService import PromoService
+from Promo.Services.PromoService import PromoService
 from Promo.Repositories.PromoRepository import PromoRepository
 from Users.Repositories.NormalUserRepository import NormalUserRepository
 from Users.models import NormalUser
@@ -8,7 +8,7 @@ from Promo.models import Promo
 
 
 
-class UserServiceTest(TestCase):
+class UserServiceCreatePromoTest(TestCase):
     
     @mock.patch('Promo.Repositories.PromoRepository')
     @mock.patch('Users.Repositories.NormalUserRepository')
@@ -78,6 +78,8 @@ class UserServiceTest(TestCase):
         self.assertEqual(result.get('error') , 'sorry internal error happen while create promotion')
 
 
+
+class UserServiceEditPromoTest(TestCase):
     @mock.patch('Promo.Repositories.PromoRepository')
     @mock.patch('Users.Repositories.NormalUserRepository')
     def test_edit_promo_promo_should_be_existed(self, promoRepository,normalUserRepository):
@@ -87,7 +89,7 @@ class UserServiceTest(TestCase):
         promoRepository.get_one_by_id.return_value =  False
         
         result = promoService.modify_promo(promoAmount=-1,description='',startTime="2021-01-12",endTime="2021-10-12",isActive=True,promoId=1,editorType="administrator_user")
-        self.assertEqual(result.get('error') , 'sorry this promo user isn\'t existed')
+        self.assertEqual(result.get('error') , 'sorry this promo isn\'t existed')
 
     @mock.patch('Promo.Repositories.PromoRepository')
     @mock.patch('Users.Repositories.NormalUserRepository')
@@ -98,7 +100,7 @@ class UserServiceTest(TestCase):
         promoRepository.get_one_by_id.return_value =  False
         
         result = promoService.modify_promo(promoAmount=-1,description='',startTime="2021-01-12",endTime="2021-10-12",isActive=True,promoId=1,editorType='test')
-        self.assertEqual(result.get('error') , 'sorry you must be administrator_user to create promotion')
+        self.assertEqual(result.get('error') , 'sorry you must be administrator_user to modify promotion')
 
 
     @mock.patch('Promo.Repositories.PromoRepository')
@@ -135,6 +137,8 @@ class UserServiceTest(TestCase):
         result = promoService.modify_promo(promoAmount=1,description='',startTime="2021-01-12",endTime="2021-10-12",isActive=True,promoId=1,editorType="administrator_user")
         self.assertEqual(result.get('data').promoAmount , 1)
 
+
+class UserServiceDeletePromoTest(TestCase):
     @mock.patch('Promo.Repositories.PromoRepository')
     @mock.patch('Users.Repositories.NormalUserRepository')
     def test_delete_promo_return_error_when_promo_not_existed(self, promoRepository,normalUserRepository):
@@ -144,7 +148,7 @@ class UserServiceTest(TestCase):
         promoRepository.get_one_by_id.return_value =   None
 
         result = promoService.delete_promo(promoId=1,editorType="administrator_user")
-        self.assertEqual(result.get('error') , 'sorry this promo user isn\'t existed')
+        self.assertEqual(result.get('error') , 'sorry this promo isn\'t existed')
 
     @mock.patch('Promo.Repositories.PromoRepository')
     @mock.patch('Users.Repositories.NormalUserRepository')
@@ -155,7 +159,7 @@ class UserServiceTest(TestCase):
         promoRepository.get_one_by_id.return_value =   None
         
         result = promoService.delete_promo(promoId=1,editorType="test")
-        self.assertEqual(result.get('error') , 'sorry you must be administrator_user to create promotion')
+        self.assertEqual(result.get('error') , 'sorry you must be administrator_user to delete promotion')
 
     @mock.patch('Promo.Repositories.PromoRepository')
     @mock.patch('Users.Repositories.NormalUserRepository')
@@ -169,6 +173,9 @@ class UserServiceTest(TestCase):
         result = promoService.delete_promo(promoId=1,editorType="administrator_user")
         self.assertEqual(result.get('data').promoAmount , 1)
 
+  
+
+class UserServiceEditPromoQuantityTest(TestCase):
     @mock.patch('Promo.Repositories.PromoRepository')
     @mock.patch('Users.Repositories.NormalUserRepository')
     def test_update_promo_amount_return_error_when_user_not_normal_user(self, promoRepository,normalUserRepository):
@@ -178,7 +185,7 @@ class UserServiceTest(TestCase):
         promoRepository.get_one_by_id.return_value =  Promo(promoAmount=1,description='',promoType='test',startTime="2022-01-12",endTime="2021-10-12",isActive=True,promoCode=5093,creationTime="2021-11-11")
         
         result = promoService.update_promo_amount(promoId=1,editorType="administrator_user",deductedPromoAmount=10,userId=1)
-        self.assertEqual(result.get('error') , 'sorry you must be normal_user to create promotion')
+        self.assertEqual(result.get('error') , 'sorry you must be normal_user to update promotion amount')
 
     @mock.patch('Promo.Repositories.PromoRepository')
     @mock.patch('Users.Repositories.NormalUserRepository')
@@ -200,7 +207,7 @@ class UserServiceTest(TestCase):
         promoRepository.get_one_by_id.return_value = False
         
         result = promoService.update_promo_amount(promoId=1,editorType="normal_user",deductedPromoAmount=1,userId=1)
-        self.assertEqual(result.get('error') , 'sorry this promo  isn\'t existed')
+        self.assertEqual(result.get('error') , 'sorry this promo isn\'t existed')
 
     @mock.patch('Promo.Repositories.PromoRepository')
     @mock.patch('Users.Repositories.NormalUserRepository')

@@ -2,6 +2,7 @@ import datetime
 import jwt
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from ..Constants import USER_TYPES , ERRORS_MESSAGES
 
 
 class UsersService:
@@ -29,21 +30,21 @@ class UsersService:
         if administrator_user:
             return {
                 "data" : {
-                    "token" : self.generate_access_token(administrator_user.id, 'administrator_user'),
+                    "token" : self.generate_access_token(administrator_user.id, USER_TYPES.get('ADMINISTRATOR_USER')),
                     "userName" : administrator_user.username,
                     "id" : administrator_user.id,
                 }
             }
         else :
             return {
-               "error" :  'sorry this user isn\'t exists'
+               "error" :  ERRORS_MESSAGES.get('USER_NOT_EXISTED')
             }
     def normal_user_login(self, username) :
             normal_user = self.normalUserRepository.get_one_by_user_name(username)
             if normal_user:
                 return {
                     "data" : {
-                        "token" : self.generate_access_token(normal_user.id, 'normal_user'),
+                        "token" : self.generate_access_token(normal_user.id, USER_TYPES.get('NORMAL_USER')),
                         "userName" : normal_user.username,
                         "id" : normal_user.id,
                         "mobileNumber" : normal_user.mobileNumber
@@ -51,7 +52,7 @@ class UsersService:
                 }
             else:
                 return {
-                   "error" : 'sorry this user isn\'t exists'
+                   "error" : ERRORS_MESSAGES.get('USER_NOT_EXISTED')
                 }
 
 

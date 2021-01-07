@@ -130,7 +130,9 @@ SWAGGER_SETTINGS = {
             'name': 'Authorization',
             'in': 'header'
       }
-   }
+   },
+   "exclude_namespaces": ["internal_apis"],
+
 }
 
 

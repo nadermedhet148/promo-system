@@ -8,7 +8,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from Users.Repositories.NormalUserRepository import NormalUserRepository
 from Promo.Repositories.PromoRepository import PromoRepository 
-from Promo.PromoService.PromoService import PromoService
+from Promo.Services.PromoService import PromoService
 from django.utils.dateparse import parse_date
 from .serializers import PromoSerializer
 
@@ -220,7 +220,7 @@ def mange_user_promo(request,pk):
         response = promoService.update_promo_amount(
             editorType=   request.user.user_type ,
             promoId =       pk,
-            promoAmount = request.data.get('deductedPromoAmount'),
+            deductedPromoAmount = request.data.get('deductedPromoAmount'),
             userId =        request.user.user_id
         )
         if(response.get('error')):

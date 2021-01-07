@@ -1,12 +1,12 @@
 from django.test import TestCase
 import mock
-from Users.UserServices import UsersService
+from Users.Services.UserServices import UsersService
 from Users.Repositories.AdministratorUserRepository import AdministratorUserRepository
 from Users.Repositories.NormalUserRepository import NormalUserRepository
 from Users.models import AdministratorUser , NormalUser
 
 
-class UserServiceTest(TestCase):
+class UserServiceAdministratorUserLoginTest(TestCase):
     
     @mock.patch('Users.Repositories.AdministratorUserRepository')
     @mock.patch('Users.Repositories.NormalUserRepository')
@@ -34,6 +34,9 @@ class UserServiceTest(TestCase):
 
 
 
+
+class UserServiceNormalUserLoginTest(TestCase):
+    
     @mock.patch('Users.Repositories.AdministratorUserRepository')
     @mock.patch('Users.Repositories.NormalUserRepository')
     def test_normal_user_login_should_return_error(self, administratorUserRepository,normalUserRepository):
